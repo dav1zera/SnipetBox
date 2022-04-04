@@ -1,15 +1,19 @@
 package main
 
 import (
-	"log"
-	"net/http"
-  
+  "net/http"
+	"strconv"
+  "fmt"
+	
 )
 
 //ListAndServer = async
 //Response e Request
-/* curl -i -X POST         http://localhost:4000/snippet/create
-curl -i -X GET         http://localhost:4000/snippet/create
+
+/* 
+
+  curl -i -X POST          http://localhost:4000/snippet/create
+  curl -i -X GET           http://localhost:4000/snippet/create
 
 */
 
@@ -25,7 +29,13 @@ func home(responseWriter http.ResponseWriter, request *http.Request) {
 }
 
 func showSnippet (responseWriter http.ResponseWriter, request *http.Request)  {
-   responseWriter.Write([]byte("Show Snippet"))
+  id, err := strconv.Atoi(request.URL.Query().Get("id"))
+
+  if err != nil || id < 1  {
+    http.NotFound(responseWriter, request)
+    return
+  }
+  fmt.Fprintf(responseWriter, "Exibir o snippet de ID: %d", id)
 }
 
 func createSnippet (responseWriter http.ResponseWriter, request *http.Request)  {
@@ -35,29 +45,7 @@ func createSnippet (responseWriter http.ResponseWriter, request *http.Request)  
     responseWriter.WriteHeader(405)
      http.Error(responseWriter, "Não permitido", http.StatusMethodNotAllowed)
     
-    return
+    return 
    }
   responseWriter.Write([]byte ("Criando novo snippet"))
 } 
-    
-     
-
-func main() {
-  //ideia de multiplexador
-  //init do server
-	mux := http.NewServeMux()
-  mux.HandleFunc("/", home)
-  mux.HandleFunc("/snippet", showSnippet)
-  mux.HandleFunc("/snippet/create", createSnippet)
-
-  
-  log.Println("Escutando na porta 4000")
-  err := http.ListenAndServe(":4000", mux)
-  log.Fatal(err)
-
-  
-}
-
-
-
-
