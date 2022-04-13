@@ -1,21 +1,24 @@
 package main
 
 import (
-  "net/http"
+	"fmt"
+	"net/http"
 	"strconv"
-  "fmt"
-	
+	"text/template"
+  "log"
 )
 
 //ListAndServer = async
 //Response e Request
 
-/* 
+/*
 
   curl -i -X POST          http://localhost:4000/snippet/create
   curl -i -X GET           http://localhost:4000/snippet/create
 
 */
+
+//http://localhost:4000/snippet?id=123
 
 func home(responseWriter http.ResponseWriter, request *http.Request) {
   if request.URL.Path != "/" {
@@ -24,8 +27,27 @@ func home(responseWriter http.ResponseWriter, request *http.Request) {
      
   }
   
-  
-  responseWriter.Write([]byte("Welcome"))
+    files := []string{
+      "./ui/html/home.page.tmpl.html",
+      "./ui/html/base.layout.tmpl.html",
+      "./ui/html/footer.partial.tmpl.html",
+      
+    }
+
+    ts, err := template.ParseFiles(files...)
+    if err != nil {
+      log.Println(err.Error())
+      http.Error(responseWriter, "Internal Error", 500)
+      return
+    }
+
+    err = ts.Execute(responseWriter, nil) 
+    if err != nil {
+      log.Println(err.Error())
+      http.Error(responseWriter, "Internal Error", 500) 
+      return
+      }
+      
 }
 
 func showSnippet (responseWriter http.ResponseWriter, request *http.Request)  {
