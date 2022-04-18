@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 	"text/template"
-  "log"
+ 
 )
 
 //ListAndServer = async
@@ -20,7 +20,7 @@ import (
 
 //http://localhost:4000/snippet?id=123
 
-func home(responseWriter http.ResponseWriter, request *http.Request) {
+func(app *application) home(responseWriter http.ResponseWriter, request *http.Request) {
   if request.URL.Path != "/" {
     http.NotFound(responseWriter, request) 
     return
@@ -36,21 +36,21 @@ func home(responseWriter http.ResponseWriter, request *http.Request) {
 
     ts, err := template.ParseFiles(files...)
     if err != nil {
-      log.Println(err.Error())
+      app.errorsLog.Println(err.Error())
       http.Error(responseWriter, "Internal Error", 500)
       return
     }
 
     err = ts.Execute(responseWriter, nil) 
     if err != nil {
-      log.Println(err.Error())
+       app.errorsLog.Println(err.Error())
       http.Error(responseWriter, "Internal Error", 500) 
       return
       }
       
 }
 
-func showSnippet (responseWriter http.ResponseWriter, request *http.Request)  {
+func(app *application) showSnippet (responseWriter http.ResponseWriter, request *http.Request)  {
   id, err := strconv.Atoi(request.URL.Query().Get("id"))
 
   if err != nil || id < 1  {
@@ -60,7 +60,7 @@ func showSnippet (responseWriter http.ResponseWriter, request *http.Request)  {
   fmt.Fprintf(responseWriter, "Exibir o snippet de ID: %d", id)
 }
 
-func createSnippet (responseWriter http.ResponseWriter, request *http.Request)  {
+func(app *application) createSnippet (responseWriter http.ResponseWriter, request *http.Request)  {
   
    if request.Method != "POST" {
     responseWriter.Header().Set("Allow", "POST")
