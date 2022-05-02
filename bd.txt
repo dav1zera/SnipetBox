@@ -1,0 +1,13 @@
+Username: sowvTXioiS
+
+Database name: sowvTXioiS
+
+Password: 6UF6FTDZPt
+
+Server: remotemysql.com
+
+Port: 3306
+
+STRING CONNECTION
+
+sowvTXioiS:6UF6FTDZPt@tcp(remotemysql.com)/sowvTXioiS?parseTime=true

@@ -8,21 +8,9 @@ import (
  
 )
 
-//ListAndServer = async
-//Response e Request
-
-/*
-
-  curl -i -X POST          http://localhost:4000/snippet/create
-  curl -i -X GET           http://localhost:4000/snippet/create
-
-*/
-
-//http://localhost:4000/snippet?id=123
-
-func(app *application) home(responseWriter http.ResponseWriter, request *http.Request) {
+func(app *applicationAux) home(responseWriter http.ResponseWriter, request *http.Request) {
   if request.URL.Path != "/" {
-    http.NotFound(responseWriter, request) 
+   app.notFound(responseWriter)
     return
      
   }
@@ -36,37 +24,35 @@ func(app *application) home(responseWriter http.ResponseWriter, request *http.Re
 
     ts, err := template.ParseFiles(files...)
     if err != nil {
-      app.errorsLog.Println(err.Error())
-      http.Error(responseWriter, "Internal Error", 500)
+     app.serverError(responseWriter, err)
       return
     }
 
     err = ts.Execute(responseWriter, nil) 
     if err != nil {
-       app.errorsLog.Println(err.Error())
-      http.Error(responseWriter, "Internal Error", 500) 
+     app.serverError(responseWriter, err)
       return
       }
       
 }
 
-func(app *application) showSnippet (responseWriter http.ResponseWriter, request *http.Request)  {
+func(app *applicationAux) showSnippet (responseWriter http.ResponseWriter, request *http.Request)  {
   id, err := strconv.Atoi(request.URL.Query().Get("id"))
 
   if err != nil || id < 1  {
-    http.NotFound(responseWriter, request)
+    app.notFound(responseWriter)
     return
   }
   fmt.Fprintf(responseWriter, "Exibir o snippet de ID: %d", id)
 }
 
-func(app *application) createSnippet (responseWriter http.ResponseWriter, request *http.Request)  {
+func(app *applicationAux) createSnippet (responseWriter http.ResponseWriter, request *http.Request)  {
   
    if request.Method != "POST" {
     responseWriter.Header().Set("Allow", "POST")
     responseWriter.WriteHeader(405)
      http.Error(responseWriter, "Não permitido", http.StatusMethodNotAllowed)
-    
+    app.clientError(responseWriter, http.StatusMethodNotAllowed)
     return 
    }
   responseWriter.Write([]byte ("Criando novo snippet"))
