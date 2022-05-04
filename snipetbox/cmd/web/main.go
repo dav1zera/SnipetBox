@@ -6,12 +6,17 @@ import (
 	"log"
 	"net/http"
 	"os"
-  _ "github.com/go-sql-driver/mysql"
+	"snipetbox/pkg/models/mysql"
+
+	_ "github.com/go-sql-driver/mysql"
 )	
 
 type applicationAux struct {
   errorsLog *log.Logger
   infoLogs *log.Logger
+  snippets *mysql.SnippetModel
+  
+  
 }
 
  func main() {
@@ -34,6 +39,7 @@ type applicationAux struct {
 app := &applicationAux {
   errorsLog: errorsLog,
   infoLogs: infoLogs,
+  snippets: &mysql.SnippetModel{DB:dataBase},
 }
    
   serverConfigs :=  &http.Server {

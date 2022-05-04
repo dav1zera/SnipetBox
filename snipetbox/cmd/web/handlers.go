@@ -55,5 +55,17 @@ func(app *applicationAux) createSnippet (responseWriter http.ResponseWriter, req
     app.clientError(responseWriter, http.StatusMethodNotAllowed)
     return 
    }
-  responseWriter.Write([]byte ("Criando novo snippet"))
+
+ title := "Aula hoje"
+ content := "Lidando com banco de dados"
+ expire := "7"
+
+  id, err := app.snippets.Insert(title, content, expire) 
+  if err != nil {
+    app.serverError(responseWriter, err)
+    return
+  }
+
+  http.Redirect(responseWriter, request, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
+ 
 } 
